@@ -15,20 +15,22 @@ Globals:
   Api:
     TracingEnabled: true
 Resources:
-  HelloWorldFunction:
+  SentimentAnalysisFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: hello_world/
-      Handler: app.lambda_handler
+      CodeUri: sentiment_analysis/
+      Handler: app.analyze_sentiment
       Runtime: python3.9
       Architectures:
-      - x86_64
+        - x86_64
       Events:
-        HelloWorld:
+        SentimentAnalysis:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /hello
             Method: get
+            RequestParameters:
+              method.request.querystring.yourQueryParamName: true
 
   ApplicationResourceGroup:
     Type: AWS::ResourceGroups::Group
@@ -47,12 +49,12 @@ Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  HelloWorldApi:
-    Description: API Gateway endpoint URL for Prod stage for Hello World function
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-  HelloWorldFunction:
-    Description: Hello World Lambda Function ARN
-    Value: !GetAtt HelloWorldFunction.Arn
-  HelloWorldFunctionIamRole:
-    Description: Implicit IAM Role created for Hello World function
-    Value: !GetAtt HelloWorldFunctionRole.Arn
+  SentimentAnalysisApi:
+    Description: API Gateway endpoint URL for Prod stage for Sentiment Analysis function
+    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/'
+  SentimentAnalysisFunction:
+    Description: Sentiment Analysis Lambda Function ARN
+    Value: !GetAtt SentimentAnalysisFunction.Arn
+  SentimentAnalysisFunctionIamRole:
+    Description: Implicit IAM Role created for Sentiment Analysis function
+    Value: !GetAtt SentimentAnalysisFunctionRole.Arn

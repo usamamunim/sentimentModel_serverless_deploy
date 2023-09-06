@@ -1,0 +1,22 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AWS SAM CLI Nested Stack for Auto Dependency Layer Creation
+Metadata:
+  SamCliInfo: 1.96.0
+  key: AWS SAM CLI sync command
+Outputs:
+  SentimentAnalysisFunction48bf41bcDepLayer:
+    Value:
+      Ref: SentimentAnalysisFunction48bf41bcDepLayer
+Resources:
+  SentimentAnalysisFunction48bf41bcDepLayer:
+    Metadata:
+      CreatedBy: AWS SAM CLI sync command
+    Properties:
+      CompatibleRuntimes:
+      - python3.9
+      ContentUri: /Users/dev/Documents/Projects/Mlops/sentimentModel_serverless_deploy/sentimentModel_serverless/.aws-sam/auto-dependency-layer/SentimentAnalysisFunction48bf41bcDepLayer
+      Description: Auto created layer for dependencies of function SentimentAnalysisFunction
+      LayerName: sentimentModelSe6c6b8873-SentimentAnalysisFunct48bf41bc-DepLayer
+      RetentionPolicy: Delete
+    Type: AWS::Serverless::LayerVersion
+Transform: AWS::Serverless-2016-10-31

@@ -1,0 +1,74 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'sentimentModel_serverless
+
+  Sample SAM Template for sentimentModel_serverless
+
+  '
+Globals:
+  Function:
+    Timeout: 3
+    MemorySize: 128
+    Tracing: Active
+  Api:
+    TracingEnabled: true
+Resources:
+  SentimentAnalysisFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: SentimentAnalysisFunction
+      Handler: app.analyze_sentiment
+      Runtime: python3.9
+      Architectures:
+      - x86_64
+      Events:
+        SentimentAnalysis:
+          Type: Api
+          Properties:
+            Path: /hello
+            Method: get
+            RequestParameters:
+              method.request.querystring.yourQueryParamName: true
+      Layers:
+      - Fn::GetAtt:
+        - AwsSamAutoDependencyLayerNestedStack
+        - Outputs.SentimentAnalysisFunction48bf41bcDepLayer
+    Metadata:
+      SamResourceId: SentimentAnalysisFunction
+  ApplicationResourceGroup:
+    Type: AWS::ResourceGroups::Group
+    Properties:
+      Name:
+        Fn::Sub: ApplicationInsights-SAM-${AWS::StackName}
+      ResourceQuery:
+        Type: CLOUDFORMATION_STACK_1_0
+  ApplicationInsightsMonitoring:
+    Type: AWS::ApplicationInsights::Application
+    Properties:
+      ResourceGroupName:
+        Ref: ApplicationResourceGroup
+      AutoConfigurationEnabled: 'true'
+  AwsSamAutoDependencyLayerNestedStack:
+    DeletionPolicy: Delete
+    Metadata:
+      CreatedBy: AWS SAM CLI sync command
+    Properties:
+      TemplateURL: /Users/dev/Documents/Projects/Mlops/sentimentModel_serverless_deploy/sentimentModel_serverless/.aws-sam/auto-dependency-layer/adl_nested_template.yaml
+    Type: AWS::CloudFormation::Stack
+Outputs:
+  SentimentAnalysisApi:
+    Description: API Gateway endpoint URL for Prod stage for Sentiment Analysis function
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/
+  SentimentAnalysisFunction:
+    Description: Sentiment Analysis Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - SentimentAnalysisFunction
+      - Arn
+  SentimentAnalysisFunctionIamRole:
+    Description: Implicit IAM Role created for Sentiment Analysis function
+    Value:
+      Fn::GetAtt:
+      - SentimentAnalysisFunctionRole
+      - Arn
